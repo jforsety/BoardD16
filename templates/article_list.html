@@ -1,0 +1,70 @@
+{% extends 'flatpages/default.html' %}
+
+<!-- Название Article -->
+{% block title %}
+Article
+{% endblock title %}
+<!-- В контенте на странице мы выводим все статьи с пагинацией -->
+{% block content %}
+   <hr>
+   <center><h2>Все статьи</h2></center>
+   <hr>
+    {% if request.user.is_authenticated %}
+    <center><a href="http://127.0.0.1:8000/article/create">Создать статью</a></center>
+    {% endif %}
+    {% if articles %}
+       <center><table>
+           <tr>
+               <td><center><b>Категория</b></center></td>
+               <td><center><b>Заголовок</b></center></td>
+               <td><center><b>Дата публикации</b></center></td>
+               <td><center><b>Текст</b></center></td>
+               <td><center><b>Подробнее</b></center></td>
+               {% if perms.appboard.update_article or perms.testapp.delete_article %}
+                    <td><center><b>Действия</b></center></td>
+               {% endif %}
+           </tr>
+
+           {% for article in articles %}
+           <tr>
+               <td><center>{{ article.category }}</center></td>
+               <td><center>{{ article.title|truncatechars:20}}</center></td>
+               <td><center>{{ article.dateCreation }}</center></td>
+               <td><center>{{ article.text|truncatechars:40}}</center></td>
+               <td><center><a href="http://127.0.0.1:8000/article/{{ article.id }}">Подробнее</a></center></td>
+                <td><center>
+                    {% if article.author == request.user %}
+                        <a href="{% url 'article_update' article.id %}"><button><small>Изменить</small></button></a>
+                        <a href="{% url 'article_delete' article.id %}"><button><small>Удалить</small></button></a>
+                    {% endif %}
+                </center></td>
+           </tr>
+           {% endfor %}
+       </table></center>
+
+    {% else %}
+       <center><h2>Статей нет!</h2></center>
+    {% endif %}
+    {# Добавляем пагинацию на страницу #}
+
+    {# Информация о предыдущих страницах #}
+    <center>{% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+    {% endif %}
+
+    {# Информация о текущей странице #}
+    {{ page_obj.number }}
+
+    {# Информация о следующих страницах #}
+    {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+    {% endif %}</center>
+{% endblock content %}

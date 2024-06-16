@@ -1,0 +1,27 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+ArticleId
+{% endblock title %}
+
+{% block content %}
+<hr>
+<center><h2>{{ articleid.title }}</h2></center>
+<hr>
+        <center><table>
+           <tr>
+               <td><center><b>Заголовок:</b></center></td>
+               <td><center><b>Дата публикации:</b></center></td>
+               <td><center><b>Текст:</b></center></td>
+           </tr>
+
+           <tr>
+               <td><center>{{ articleid.title }}</center></td>
+               <td><center>{{ articleid.dateCreation|date:'d M Y' }}</center></td>
+               <td><center>{{ articleid.text }}</center></td>
+           </tr>
+
+       </table></center>
+        <center><a href="http://127.0.0.1:8000/article/">Вернуться назад</a></center>
+
+{% endblock content %}

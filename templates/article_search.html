@@ -1,0 +1,66 @@
+{% extends 'flatpages/default.html' %}
+
+
+{% block title %}
+search
+{% endblock title %}
+
+{% block content %}
+<hr>
+<h1>Поиск</h1>
+<form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       <center>{{ filterset.form.as_p }}</center>
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+   </form>
+<hr>
+    {% if article_search %}
+       <table>
+           <tr>
+               <td><center>ID</center></td>
+               <td><center>Заголовок</center></td>
+               <td><center>Дата публикации</center></td>
+               <td><center>Текст</center></td>
+           </tr>
+
+           {% for post in article_search %}
+           <tr>
+               <td><center>{{ post.id }}</center></td>
+               <td><center>{{ post.title|truncatechars:20 }}</center></td>
+               <td><center>{{ post.created_date }}</center></td>
+               <td><center>{{ post.text|truncatechars:20 }}</center></td>
+           </tr>
+           {% endfor %}
+
+       </table>
+
+
+    {% else %}
+       <h2>Новостей нет!</h2>
+    {% endif %}
+    {# Добавляем пагинацию на страницу #}
+
+    {# Информация о предыдущих страницах #}
+    {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+    {% endif %}
+
+    {# Информация о текущей странице #}
+    {{ page_obj.number }}
+
+    {# Информация о следующих страницах #}
+    {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+    {% endif %}
+<center><a href="http://127.0.0.1:8000/article/">Вернуться назад</a></center>
+
+{% endblock content %}
