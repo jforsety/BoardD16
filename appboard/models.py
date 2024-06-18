@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
 from django.urls import reverse
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class User(AbstractUser):
@@ -25,7 +26,7 @@ class Article(models.Model):
     text = models.TextField(verbose_name='Описание')
     category = models.CharField(max_length=16, choices=TYPE, default='tank', verbose_name='Категория')
     dateCreation = models.DateTimeField(auto_now_add=True, verbose_name='Время публикации')
-    # upload = RichTextUploadingField(verbose_name='Загрузка файла')
+    upload = RichTextUploadingField(verbose_name='Загрузка файла')
 
     def __str__(self):
         return f'{self.id} : {self.title}'

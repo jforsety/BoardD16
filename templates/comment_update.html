@@ -1,0 +1,22 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+
+
+{% block title %}
+Редактирование отклика "{{ comment.text }}"
+{% endblock title %}
+
+{% block content %}
+<h2> Редактирование отклика "{{ comment.text }}": </h2>
+<hr>
+{% if user == commentUser %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Подтвердить/Отменить</button>
+</form>
+{% else %}
+<h4><i>У Вас нет прав для редактирования данной объявления</i></h4>
+<h4><i>либо Вы не являетесь автором данного объявления!</i></h4>
+{% endif %}
+{% endblock content %}

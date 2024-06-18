@@ -1,5 +1,5 @@
 {% extends 'flatpages/default.html' %}
-
+{% load static %}
 <!-- Название Article -->
 {% block title %}
 Article
@@ -10,28 +10,36 @@ Article
    <center><h2>Все статьи</h2></center>
    <hr>
     {% if request.user.is_authenticated %}
-    <center><a href="http://127.0.0.1:8000/article/create">Создать статью</a></center>
+    <center><a href="http://127.0.0.1:8000/article/create"><button><small>Создать статью</small></button></a></center>
     {% endif %}
     {% if articles %}
        <center><table>
            <tr>
+               <td><center><b>Файл</b></center></td>
                <td><center><b>Категория</b></center></td>
+               <td><center><b>Автор</b></center></td>
                <td><center><b>Заголовок</b></center></td>
                <td><center><b>Дата публикации</b></center></td>
                <td><center><b>Текст</b></center></td>
                <td><center><b>Подробнее</b></center></td>
-               {% if perms.appboard.update_article or perms.testapp.delete_article %}
+               {% if perms.appboard.update_article or perms.appboard.delete_article %}
                     <td><center><b>Действия</b></center></td>
                {% endif %}
            </tr>
 
            {% for article in articles %}
            <tr>
+               {% if article.upload %}
+                    <td>{{ article.upload|safe }}</td>
+                {% else %}
+                    <td> - </td>
+                {% endif %}
                <td><center>{{ article.category }}</center></td>
+               <td><center>{{ article.author }}</center></td>
                <td><center>{{ article.title|truncatechars:20}}</center></td>
                <td><center>{{ article.dateCreation }}</center></td>
                <td><center>{{ article.text|truncatechars:40}}</center></td>
-               <td><center><a href="http://127.0.0.1:8000/article/{{ article.id }}">Подробнее</a></center></td>
+               <td><center><a href="http://127.0.0.1:8000/article/{{ article.id }}"><button><small>Подробнее</small></button></a></center></td>
                 <td><center>
                     {% if article.author == request.user %}
                         <a href="{% url 'article_update' article.id %}"><button><small>Изменить</small></button></a>

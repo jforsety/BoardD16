@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+{% block head_title %}Активация аккаунта{% endblock %}
+
+{% block content %}
+    <h2 style="...">Введите код активации</h2>
+    <form action="{% url 'confirm_user' %}" method="post" style="...">
+        {% csrf_token %}
+        <label>
+            <input class="text" type="text" name="code" placeholder="Введите код активации">
+        </label>
+        <input type="submit" value="Подтвердить">
+    </form>
+
+{% endblock content %}

@@ -1,0 +1,57 @@
+{% extends 'flatpages/default.html' %}
+{% load static %}
+
+{% block content %}
+<h3>Личный кабинет {{ request.user.username }}</h3>
+
+<hr>
+
+<form action="" method="get">
+    {{ filterset.form.as_p }}
+    <input type="submit" value="Найти"/>
+</form>
+
+<br><button><a href="/article/profile/">Сбросить фильтр</a></button>
+<hr>
+<h4>Все отклики на выбранное объявление:</h4>
+{% if comments %}
+    {% for comment in comments %}
+        <b>{{ comment.commentUser }}</b>
+        <p>{{ comment.dateCreation }}</p>
+        <p>{{ comment.text }}</p>
+        {% if Comment.author == request.user.author %}
+            <a href="{% url 'comment_update' comment.id %}"><button><small>Изменить</small></button></a>
+            <a href="{% url 'comment_delete' comment.id %}"><button><small>Удалить</small></button></a>
+        {% endif %}
+        {% if comment.status == False %}
+            <form method="post" action="{% url 'confirm_comment' comment.id %}">
+                {% csrf_token %}
+                <button type="submit" name="action" value="accepted">Принять</button>
+            </form>
+        {% else %}
+            <form method="post" action="{% url 'reject_comment' comment.id %}">
+                {% csrf_token %}
+                <button type="submit" name="action" value="rejected" class="btn btn-light text-dark me-2">Отклонить</button>
+            </form>
+        {% endif %}
+            <tr>
+            <td style="font-weight: bold;">
+                {% if comment.status == 'unknown' %}
+                    <p class="text-secondary">На рассмотрении</p>
+                {% elif comment.status == 'accepted' %}
+                    <p style="color: #00cc00; ">Принят</p>
+                {% else %}
+                {% if comment.status == False %}
+                    <p style="color: #cc0000; ">Отклонено</p>
+                {% else %}
+                    <p style="color: #cc0000; ">Принят</p>
+                {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+<hr>
+    {% endfor %}
+    {% else %}
+        <h4 class="fw-bold text-sm-center">Пока никто не отправлял отклик на ваши объявления</h4>
+{% endif %}
+{% endblock content %}

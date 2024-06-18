@@ -1,10 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'flatpages/default.html' %}
+{% load static %}
 
-</body>
-</html>
+{% block title %}
+Редактирование объявления
+{% endblock title %}
+
+{% block content %}
+<h2> Редактирование объявления </h2>
+<hr>
+{% if user == author %}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit">Подтвердить/Отменить</button>
+</form>
+{% else %}
+<h4><i>У Вас нет прав для редактирования данной объявления</i></h4>
+<h4><i>либо Вы не являетесь автором данного объявления!</i></h4>
+{% endif %}
+{% endblock content %}

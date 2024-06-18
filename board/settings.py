@@ -28,6 +28,17 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 SITE_ID = 1
+AUTH_USER_MODEL = 'appboard.User'
+LOGIN_URL = 'account_login'
+LOGIN_REDIRECT_URL = "/article"
+LOGOUT_REDIRECT_URL = "/article"
+
+ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # Application definition
 
@@ -42,6 +53,13 @@ INSTALLED_APPS = [
     'django.contrib.flatpages',
     'django_filters',
     'appboard',
+    'accounts',
+    'ckeditor',
+    'ckeditor_uploader',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.yandex',
 ]
 
 MIDDLEWARE = [
@@ -52,7 +70,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'board.urls'
@@ -73,8 +92,12 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'board.wsgi.application'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
+WSGI_APPLICATION = 'board.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -109,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
 TIME_ZONE = 'UTC'
 
@@ -134,6 +157,80 @@ STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 
-AUTH_USER_MODEL = 'appboard.User'
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# smtp Yandex
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER_SMTP')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD_SMTP')
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL_SMTP')
+
+SERVER_EMAIL = os.getenv('SERVER_EMAIL_SMTP')
+MANAGERS = (
+    ('Alex', 'foxlysky@gmail.com'),
+)
+ADMINS = (
+    ('Alex', 'alexcist33@gmail.com'),
+)
+
+# CKeditor
+MEDIA_ROOT = 'media/'
+MEDIA_URL = '/media/'
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_FILENAME_GENERATOR = 'utils.get_filename'
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'skin': 'moono-lisa',
+        'toolbar_Basic': [
+            ['Source', '-', 'Bold', 'Italic']
+        ],
+        'toolbar_YourCustomToolbarConfig': [
+            {'name': 'document', 'items': ['Source', '-', ]},
+            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo']},
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic']},
+            {'name': 'paragraph',
+             'items': ['NumberedList',  '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-',]},
+            {'name': 'insert', 'items': ['Image']},
+            '/',  # put this to force next toolbar on new line
+            {'name': 'styles', 'items': ['Format', 'Font', 'FontSize']},
+            {'name': 'about', 'items': ['About']},
+            {'name': 'yourcustomtools', 'items': [
+                # put the name of your editor.ui.addButton here
+                'Preview',
+                'Maximize',
+                'Youtube',
+
+            ]},
+        ],
+        'toolbar': 'YourCustomToolbarConfig',  # put selected toolbar config here
+        'tabSpaces': 4,
+        'extraPlugins': ','.join([
+            'uploadimage', # the upload image feature
+            # your extra plugins here
+            'div',
+            'autolink',
+            'autoembed',
+            'embedsemantic',
+            'autogrow',
+            # 'devtools',
+            'widget',
+            'lineutils',
+            'clipboard',
+            'dialog',
+            'dialogui',
+            'elementspath',
+            'youtube'
+        ]),
+    }
+}
+
+
 
 

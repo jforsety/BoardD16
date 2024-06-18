@@ -1,5 +1,5 @@
 {% extends 'flatpages/default.html' %}
-
+{% load static %}
 {% block content %}
 <h1>Создание Статьи</h1>
 <hr>
@@ -7,9 +7,9 @@
 <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}
+    {{ form.media }}
     <input type="submit" value="Сохранить" />
 </form>
 {% endif %}
-{% else %}
 
 {% endblock content %}

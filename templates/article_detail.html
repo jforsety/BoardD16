@@ -1,7 +1,7 @@
 {% extends 'flatpages/default.html' %}
-
+{% load static %}
 {% block title %}
-ArticleId
+Article
 {% endblock title %}
 
 {% block content %}
@@ -10,18 +10,65 @@ ArticleId
 <hr>
         <center><table>
            <tr>
+               <td><center><b>Автор:</b></center></td>
                <td><center><b>Заголовок:</b></center></td>
                <td><center><b>Дата публикации:</b></center></td>
                <td><center><b>Текст:</b></center></td>
            </tr>
 
            <tr>
+               <td><center>{{ articleid.author }}</center></td>
                <td><center>{{ articleid.title }}</center></td>
                <td><center>{{ articleid.dateCreation|date:'d M Y' }}</center></td>
                <td><center>{{ articleid.text }}</center></td>
            </tr>
+       </table></center>
+<center><table>
+           <tr>
+               <td><center><b>Файл:</b></center></td>
+           </tr>
+
+           <tr>
+               {% if articleid.upload %}
+                    <td>{{ articleid.upload|safe }}</td>
+                {% else %}
+                    <td> - </td>
+                {% endif %}
+           </tr>
 
        </table></center>
-        <center><a href="http://127.0.0.1:8000/article/">Вернуться назад</a></center>
+<center><table>
+            <tr>
+                <td><center><b>Действия</b></center></td>
+
+                <td>
+                    {% if articleid.author == request.user %}
+                        <a href="{% url 'article_update' articleid.id %}"><button><small>Изменить</small></button></a>
+
+                        <a href="{% url 'article_delete' articleid.id %}"><button><small>Удалить</small></button></a>
+                    {% endif %}
+                </td>
+
+            </tr>
+        </table></center>
+        <form action="{% url 'comment_create' articleid.id %}" method="post">
+        {% csrf_token %}
+        <br>{{ form }}</br>
+        <button><small><input type="submit" value="Создать отклик"/></small></button>
+    </form>
+<br>
+<hr>
+    <h5>Все отклики:</h5>
+        {% for comment in articleid.comment_set.all %}
+            <p>{{ comment.commentUser.username }}</p>
+            <p>{{ comment.text }}</p>
+                {% if Comment.author == request.user.author %}
+                    <a href="{% url 'comment_update' comment.id %}"><button><small>Изменить</small></button></a>
+
+                    <a href="{% url 'comment_delete' comment.id %}"><button><small>Удалить</small></button></a>
+                {% endif %}
+<hr>
+        {% endfor %}
+        <center><a href="http://127.0.0.1:8000/article/"><button><small>Вернуться назад</small></button></a></center>
 
 {% endblock content %}
