@@ -106,35 +106,35 @@ class ArticleUpdate(UpdateView, LoginRequiredMixin):
         return context
 
 
-@login_required
-@csrf_protect
-def subscriptions(request):
-    if request.method == 'POST':
-        category_id = request.POST.get('category_id')
-        category = Article.objects.get(id=category_id)
-        action = request.POST.get('action')
-
-        if action == 'subscribe':
-            Subscription.objects.create(user=request.user, category=category)
-        elif action == 'unsubscribe':
-            Subscription.objects.filter(
-                user=request.user,
-                category=category,
-            ).delete()
-
-    categories_with_subscriptions = Article.objects.annotate(
-        user_subscribed=Exists(
-            Subscription.objects.filter(
-                user=request.user,
-                user_id=OuterRef('pk'),
-            )
-        )
-    ).order_by('user_subscribed')
-    return render(
-        request,
-        'subscriptions.html',
-        {'categories': categories_with_subscriptions},
-    )
+# @login_required
+# @csrf_protect
+# def subscriptions(request):
+#     if request.method == 'POST':
+#         category_id = request.POST.get('category_id')
+#         category = Article.objects.get(id=category_id)
+#         action = request.POST.get('action')
+#
+#         if action == 'subscribe':
+#             Subscription.objects.create(user=request.user, category=category)
+#         elif action == 'unsubscribe':
+#             Subscription.objects.filter(
+#                 user=request.user,
+#                 category=category,
+#             ).delete()
+#
+#     categories_with_subscriptions = Article.objects.annotate(
+#         user_subscribed=Exists(
+#             Subscription.objects.filter(
+#                 user=request.user,
+#                 user_id=OuterRef('pk'),
+#             )
+#         )
+#     ).order_by('user_subscribed')
+#     return render(
+#         request,
+#         'subscriptions.html',
+#         {'categories': categories_with_subscriptions},
+#     )
 
 
 class ConfirmUser(UpdateView):
@@ -186,7 +186,7 @@ class CommentCreate(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['article_id'] = self.kwargs['pk']
+        context['articleid'] = Article.objects.get(pk=self.kwargs['pk'])
         return context
 
 
